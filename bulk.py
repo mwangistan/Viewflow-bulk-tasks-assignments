@@ -9,6 +9,7 @@ def bulk_task_assignment_view(request):
             try:
                 #If one task fails all are not assigned
                 task = Task.objects.filter(process=process).get(status="NEW")
+                task.entry_holder = entry
                 taskArr.append(task)
             except:
                 del taskArr[:]
@@ -18,6 +19,6 @@ def bulk_task_assignment_view(request):
         else:
             for task in taskArr:
                 activation = get_activation_from_task_id(task.id)
-                assign_form_activation(request, activation, entry, request.POST.get('assigned_to'), 
+                assign_form_activation(request, activation, task.entry_holder, request.POST.get('assigned_to'), 
                     request.POST.get('supervisor'))
             return HttpResponse(json.dumps({'msg': "Tasks assigned successfully"}), content_type="application/json")
